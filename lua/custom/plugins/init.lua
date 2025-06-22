@@ -16,12 +16,20 @@ return {
         end,
         desc = 'File Explorer',
       },
+      {
+        '<C-/>',
+        function()
+          Snacks.terminal()
+        end,
+        desc = 'Open the Terminal',
+      },
     },
     opts = {
       picker = {
         enabled = true,
       },
       dashboard = { enabled = true },
+      terminal = { enabled = true },
     },
   },
   {
@@ -31,6 +39,7 @@ return {
     keys = {
       { '<s-h>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Cycle to Previous Buffer' },
       { '<s-l>', '<cmd>BufferLineCycleNext<cr>', desc = 'Cycle to Next Buffer' },
+      { '<leader>bd', '<cmd>bd<cr>', desc = 'Delete current Buffer' },
     },
     opts = {
       options = {
