@@ -4,25 +4,39 @@
 -- See the kickstart.nvim README for more information
 return {
   {
-    'akinsho/bufferline.nvim',
-    requires = 'nvim-tree/nvim-web-devicons',
+    'folke/snacks.nvim',
+    priority = 1000,
     lazy = false,
+    ---@type snacks.Config
+    keys = {
+      {
+        '<leader>e',
+        function()
+          Snacks.explorer()
+        end,
+        desc = 'File Explorer',
+      },
+    },
+    opts = {
+      picker = {
+        enabled = true,
+      },
+      dashboard = { enabled = true },
+    },
+  },
+  {
+    'akinsho/bufferline.nvim',
+    lazy = false,
+    requires = 'nvim-tree/nvim-web-devicons',
     keys = {
       { '<s-h>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Cycle to Previous Buffer' },
       { '<s-l>', '<cmd>BufferLineCycleNext<cr>', desc = 'Cycle to Next Buffer' },
     },
-    opts = {},
-  },
-
-  {
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
+    opts = {
+      options = {
+        show_buffer_icons = true,
+        separator_style = 'slant',
+      },
     },
-    config = function()
-      require('nvim-tree').setup {}
-    end,
   },
 }
