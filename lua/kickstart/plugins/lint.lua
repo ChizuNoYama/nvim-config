@@ -3,10 +3,21 @@ return {
   { -- Linting
     'mfussenegger/nvim-lint',
     event = { 'BufReadPre', 'BufNewFile' },
+
+    keys = {
+      {
+        '<leader>ll',
+        function()
+          lint.try_lint()
+        end,
+        desc = 'Trigger linting for current file',
+      },
+    },
     config = function()
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        cpp = { 'cpplint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

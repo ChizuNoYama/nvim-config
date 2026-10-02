@@ -78,4 +78,52 @@ return {
       },
     },
   },
+
+  -- {
+  --   'mfussenegger/nvim-dap',
+  --   dependencies = {
+  --     'rcarriga/nvim-dap-ui',
+  --     'theHamsta/nvim-dap-virtual-text',
+  --     'nvim-neotest/nvim-nio',
+  --   },
+  --   config = function()
+  --     local dap = require 'dap'
+  --     local dapui = require 'dapui'
+  --     local mason_registry = require 'mason-registry'
+  --
+  --     -- Setup dap-ui
+  --     dapui.setup()
+  --
+  --     -- Auto open/close UI
+  --     dap.listeners.after.event_initialized['dapui_config'] = function()
+  --       dapui.open()
+  --     end
+  --     dap.listeners.before.event_terminated['dapui_config'] = function()
+  --       dapui.close()
+  --     end
+  --     dap.listeners.before.event_exited['dapui_config'] = function()
+  --       dapui.close()
+  --     end
+  --     -- Get netcoredbg path from Mason
+  --     local netcoredbg = mason_registry.get_package 'netcoredbg'
+  --     local debugger_path = netcoredbg:get_install_path '/netcoredbg'
+  --
+  --     dap.adapters.coreclr = {
+  --       type = 'executable',
+  --       command = debugger_path,
+  --       args = { '--interpreter=vscode' },
+  --     }
+  --
+  --     dap.configurations.cs = {
+  --       {
+  --         type = 'coreclr',
+  --         name = 'Launch - netcoredbg',
+  --         request = 'launch',
+  --         program = function()
+  --           return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Debug/net9.0/Viddy.dll', 'file')
+  --         end,
+  --       },
+  --     }
+  --   end,
+  -- },
 }

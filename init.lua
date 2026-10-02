@@ -169,6 +169,9 @@ vim.o.confirm = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
+
+vim.o.wrap = true
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -208,6 +211,16 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- My custom commands
+vim.keymap.set('n', '<F5>', function()
+  require('dap').continue()
+end)
+vim.keymap.set('n', '<Leader>B', function()
+  require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
+end)
+vim.o.linebreak = true
+vim.o.wrapmargin = 0
+vim.opt.textwidth = 0
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -967,6 +980,7 @@ require('lazy').setup({
   --},
   {
     'seblyng/roslyn.nvim',
+    lazy = false,
     ft = 'cs',
     ---@module 'roslyn.config'
     ---@type RoslynNvimConfig
