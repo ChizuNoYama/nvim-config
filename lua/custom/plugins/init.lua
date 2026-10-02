@@ -2,7 +2,23 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
+--
+
 return {
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = {
+      function()
+        require('lualine').setup()
+      end,
+    },
+  },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+  },
   {
     'folke/snacks.nvim',
     priority = 1000,
@@ -16,20 +32,10 @@ return {
         end,
         desc = 'File Explorer',
       },
-      {
-        '<C-/>',
-        function()
-          Snacks.terminal()
-        end,
-        desc = 'Open the Terminal',
-      },
     },
     opts = {
-      picker = {
-        enabled = true,
-      },
+      picker = { enabled = true },
       dashboard = { enabled = true },
-      terminal = { enabled = true },
     },
   },
   {
@@ -49,23 +55,91 @@ return {
     },
   },
   {
-    'kdheepak/lazygit.nvim',
-    lazy = true,
-    cmd = {
-      'LazyGit',
-      'LazyGitConfig',
-      'LazyGitCurrentFile',
-      'LazyGitFilter',
-      'LazyGitFilterCurrentFile',
-    },
-    -- optional for floating window border decoration
+    'nvim-flutter/flutter-tools.nvim',
+    lazy = false,
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
-    -- setting the keybinding for LazyGit with 'keys' is recommended in
-    -- order to load the plugin when the command is run for the first time
-    keys = {
-      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
-    },
+    config = true,
+  },
+
+  {
+    'mfussenegger/nvim-dap',
+    dependencies = { 'rcarriga/nvim-dap-ui', 'nvim-neotest/nvim-nio' },
+    config = function()
+      local dap = require 'dap'
+      local dapui = require 'dapui'
+      dapui.setup()
+
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+
+      dap.adapters.dart = {
+        type = 'executable',
+        command = 'dart',
+        args = { 'debug_adapter' },
+      }
+      dap.adapters.flutter = {
+        type = 'executable',
+        command = 'flutter',
+        args = { 'debug_adapter' },
+      }
+
+      dap.configurations.dart = {
+        -- {
+        --   type = 'dart',
+        --   request = 'launch',
+        --   name = 'Launch dart',
+        --   dartSdkPath = '/opt/homebrew/share/flutter/bin/cache/dart-sdk/bin/dart',
+        --   flutterSdkPath = '/opt/homebrew/share/flutter/bin/flutter',
+        --   program = '${workspaceFolder}/lib/main.dart',
+        --   cwd = '${workspaceFolder}',
+        -- },
+        {
+          type = 'flutter',
+          request = 'launch',
+          name = 'Launch flutter',
+          dartSdkPath = '/opt/homebrew/share/flutter/bin/cache/dart-sdk/bin/dart',
+          flutterSdkPath = '/opt/homebrew/share/flutter/bin/flutter',
+          program = '${workspaceFolder}/lib/main.dart',
+          cwd = '${workspaceFolder}',
+        },
+      }
+
+      vim.keymap.set('n', '<leader>Db', function()
+        dap.toggle_breakpoint()
+      end, { desc = 'DAP: Toggle Breakpoint' })
+      vim.keymap.set('n', '<leader>Dc', function()
+        dap.continue()
+      end, { desc = 'DAP: Continue' })
+      vim.keymap.set('n', '<leader>Do', function()
+        dap.step_over()
+      end, { desc = 'DAP: Step Over' })
+      vim.keymap.set('n', '<leader>Di', function()
+        dap.step_into()
+      end, { desc = 'DAP: Step Into' })
+      vim.keymap.set('n', '<leader>Dt', function()
+        dap.terminate()
+      end, { desc = 'DAP: Terminate' })
+      vim.keymap.set('n', '<leader>Dr', function()
+        local session = dap.session()
+        if session then
+          session:request 'hotReload'
+        else
+          print 'No active DAP session'
+        end
+      end, { desc = 'DAP: Hot Reload' })
+    end,
   },
 }

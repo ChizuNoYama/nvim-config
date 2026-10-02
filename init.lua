@@ -169,11 +169,9 @@ vim.o.confirm = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
 
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
+-- Goddamn it stop the fucking wrapping
+
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
@@ -247,6 +245,7 @@ rtp:prepend(lazypath)
 --  To update plugins you can run
 --    :Lazy update
 -- NOTE: Here is where you install your plugins.
+
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
@@ -778,11 +777,13 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        rust = { 'rustfmt' },
+        c = { 'clang_format' },
+      },
+      formatters = {
+        rustfmt = {
+          args = { '--edition', '2021', '--config', 'max_width=999', '--emit', 'stdout', '--', '-' },
+        },
       },
     },
   },
@@ -900,46 +901,44 @@ require('lazy').setup({
     end,
   },
 
-  -- Highlight todo, notes, etc in comments
-  -- { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-  { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
-    config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
-      --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-      --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
-
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      --  local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      -- statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      -- statusline.section_location = function()
-      --  return '%2l:%-2v'
-      -- end
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
-    end,
-  },
+  -- TODO: Remove this shit
+  -- { -- Collection of various small independent plugins/modules
+  --   'echasnovski/mini.nvim',
+  --   config = function()
+  --     -- Better Around/Inside textobjects
+  --     --
+  --     -- Examples:
+  --     --  - va)  - [V]isually select [A]round [)]paren
+  --     --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
+  --     --  - ci'  - [C]hange [I]nside [']quote
+  --     require('mini.ai').setup { n_lines = 500 }
+  --
+  --     -- Add/delete/replace surroundings (brackets, quotes, etc.)
+  --     --
+  --     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+  --     -- - sd'   - [S]urround [D]elete [']quotes
+  --     -- - sr)'  - [S]urround [R]eplace [)] [']
+  --     require('mini.surround').setup()
+  --
+  --     -- Simple and easy statusline.
+  --     --  You could remove this setup call if you don't like it,
+  --     --  and try some other statusline plugin
+  --     --  local statusline = require 'mini.statusline'
+  --     -- set use_icons to true if you have a Nerd Font
+  --     -- statusline.setup { use_icons = vim.g.have_nerd_font }
+  --
+  --     -- You can configure sections in the statusline by overriding their
+  --     -- default behavior. For example, here we set the section for
+  --     -- cursor location to LINE:COLUMN
+  --     ---@diagnostic disable-next-line: duplicate-set-field
+  --     -- statusline.section_location = function()
+  --     --  return '%2l:%-2v'
+  --     -- end
+  --
+  --     -- ... and there is more!
+  --     --  Check out: https://github.com/echasnovski/mini.nvim
+  --   end,
+  -- },
   --{ -- Highlight, edit, and navigate code
   --  'nvim-treesitter/nvim-treesitter',
   --  build = ':TSUpdate',
@@ -965,15 +964,6 @@ require('lazy').setup({
   --  --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
   --  --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   --},
-  {
-    'seblyng/roslyn.nvim',
-    ft = 'cs',
-    ---@module 'roslyn.config'
-    ---@type RoslynNvimConfig
-    opts = {
-      -- your configuration comes here; leave empty for default settings
-    },
-  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1025,3 +1015,61 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- My configs here
+
+vim.o.wrap = true
+vim.o.textwidth = 0
+
+-- Pack plugins
+-- vim.pack.add { 'https://github.com/mfussenegger/nvim-dap' }
+
+-- local dap = require 'dap'
+--
+-- dap.configurations.dart = {
+--   {
+--     type = 'dart',
+--     request = 'launch',
+--     name = 'Launch dart',
+--     dartSdkPath = '/opt/flutter/bin/cache/dart-sdk/bin/dart', -- ensure this is correct
+--     flutterSdkPath = '/opt/flutter/bin/flutter', -- ensure this is correct
+--     program = '${workspaceFolder}/lib/main.dart', -- ensure this is correct
+--     cwd = '${workspaceFolder}',
+--   },
+--   {
+--     type = 'flutter',
+--     request = 'launch',
+--     name = 'Launch flutter',
+--     dartSdkPath = '/opt/flutter/bin/cache/dart-sdk/bin/dart', -- ensure this is correct
+--     flutterSdkPath = '/opt/flutter/bin/flutter', -- ensure this is correct
+--     program = '${workspaceFolder}/lib/main.dart', -- ensure this is correct
+--     cwd = '${workspaceFolder}',
+--   },
+-- }
+
+-- [[ Basic Keymaps ]]
+
+-- Show a symbol at the start of wrapped lines
+vim.opt.showbreak = '↪ '
+
+-- Make j/k move by visual lines (not real lines) when wrapping
+vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
+vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
+
+-- Same for arrow keys if you use them
+vim.keymap.set('n', '<Down>', 'gj', { noremap = true, silent = true })
+vim.keymap.set('n', '<Up>', 'gk', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>w', function()
+  vim.wo.wrap = not vim.wo.wrap
+end, { desc = 'Toggle wrap' })
+
+-- This will disable hardwrapping by setting text_width to 0. Overrides setting on whatever that was setting this
+vim.api.nvim_create_autocmd({ 'FileType', 'BufEnter' }, {
+  pattern = '*',
+  callback = function()
+    vim.opt_local.textwidth = 0
+    vim.opt_local.formatoptions:remove 't'
+    vim.opt_local.formatoptions:remove 'c'
+  end,
+})
